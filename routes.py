@@ -1,4 +1,7 @@
-from models import db
+from flask import Flask, render_template, url_for , flash, redirect
+from routes import app 
+from  forms import RegistrationForm, LoginForm
+from models import User, Post 
 posts = [
     {
         'author': 'Memzo',
