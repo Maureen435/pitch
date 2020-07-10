@@ -1,7 +1,8 @@
 from flask import Flask, render_template, url_for , flash, redirect
-from __init__ import app, db, bcrypt
+from __init__ import app, db, bcrypt, login_manager
 from  forms import RegistrationForm, LoginForm
 from models import User, Post 
+from flask_login import login_user, current_user, logout_user, login_required
 
 posts = [
     {
@@ -43,11 +44,12 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        if form.email.data == 'memo@gmail.com' and form.password.data == 'password':
-            flash('You have been logged in!', 'success')
+        user = User.quetry.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
             return redirect(url_for('home'))
         else:
-            flash('Login Unsuccessful. Please check username and password', 'danger')
+            flash('Login Unsuccessful. Please check email and password', 'danger')
 
     return render_template('login.html',title='Login', form=form)
 
