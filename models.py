@@ -20,6 +20,7 @@ class User(db.Model, UserMixin):
 
 
 class Post(db.Model):
+    __tablename__ = 'pitches'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -29,3 +30,24 @@ class Post(db.Model):
 
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
+
+
+
+class Comment(db.Model):
+    __table__ = 'comments'
+    id = db.Column(db.Integer, primary_key=True)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    content = db.Column(db.Text, nullable=False)
+
+    def __repr__(self):
+        return f"User('{self.date_posted}')"
+
+class Vote(db.Model):
+    __table__ = 'votes'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    upvote = db.Column('upvote', db.Integer, default=0)
+    downvote = db.Column('downvote', db.Integer, default=0)
+
+    def __repr__(self):
+        return f"User('{self.votes}')"
