@@ -4,6 +4,7 @@ from  forms import RegistrationForm, LoginForm
 from models import User, Post 
 from flask_login import login_user, current_user, logout_user, login_required
 
+
 posts = [
     {
         'author': 'Memzo',
@@ -30,6 +31,8 @@ def about():
 
 @app.route("/register")
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_passworf_hash(form.password.data).decode('utf-8')
@@ -42,6 +45,8 @@ def register():
 
 @app.route("/login")
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.quetry.filter_by(email=form.email.data).first()
@@ -53,5 +58,12 @@ def login():
 
     return render_template('login.html',title='Login', form=form)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+@app.route("/account")
+@login_required
+def account():
+    return render_template('account.html', title='Account')
