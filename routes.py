@@ -1,3 +1,6 @@
+import os 
+import secrets
+from PIL import Image
 from flask import Flask, render_template, url_for , flash, redirect
 from __init__ import app, db, bcrypt, login_manager
 from  forms import RegistrationForm, LoginForm, UpdateAccountForm
@@ -63,9 +66,18 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-@app.route("/account")
+@app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
     form = UpdateAccountForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data 
+        db.session.commit()
+        flash('your account has been updated', 'success')
+        return redirect(url_for('account'))
+    elif request.method == 'GET':
+        form.username.data = current_username
+        form.email.data = current_user.email 
     image_file = url_for('static', filename='profile.pic/' + current_user.image_file)
     return render_template('account.html', title='Account', image_file=image_file, form=form)
