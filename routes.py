@@ -7,6 +7,20 @@ from  forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 from models import User, Post 
 from flask_login import login_user, current_user, logout_user, login_required
 
+posts = [
+    {
+        'author': 'Memzo',
+        'title': 'Blog post 1',
+        'content': 'First post content',
+        'date_posted': 'July 7, 2020'
+    },
+    {
+        'author': 'Kemei',
+        'title': 'Blog post 2',
+        'content': 'Second post content',
+        'date_posted': 'July 8, 2020'
+    }
+]
 
 @app.route("/")
 @app.route("/home")
@@ -79,3 +93,8 @@ def account():
             flash('your post has been created!', 'success')
             return redirect(url_for('home'))
         return render_template('create_post.html', title='New post')
+
+    @app.route("/post/<post_id>")
+    def post(post_id):
+        post = Post.query.get_or_404(post_id)
+        return render_template('post.html', title=post.title, post=post)
